@@ -1,0 +1,13 @@
+2024-11-23 14:03:22.679 [ERROR] Invalid response from API E_4001: web
+2024-11-23 14:03:23.456 [ERROR] Permission denied: E_3001 accessing db
+2024-11-23 14:03:24.232 [ERROR] Query execution failed: E_3001 in procedure api
+2024-11-23 14:03:25.007 [ERROR] Invalid JWT token: E_4001 for user auth
+2024-11-23 14:03:25.782 [ERROR] Invalid response from API E_1001: web
+2024-11-23 14:03:26.559 [ERROR] Database replication lag: E_3001 seconds behind master
+2024-11-23 14:03:27.628 [ERROR] Template rendering failed: E_1001
+2024-11-23 14:03:28.691 [ERROR] Database replication lag: E_4001 seconds behind master
+2024-11-23 14:03:29.754 [ERROR] gRPC stream error: E_4001
+2024-11-23 14:03:30.819 [ERROR] Transaction rollback triggered: E_1002
+2024-11-23 14:03:31.886 [ERROR] Failed login attempt for user E_1002 from IP auth
+2024-11-23 14:36:00.859 [ERROR] API key validation failed: E_1002
+2024-11-23 14:36:02.921 [ERROR] OAuth token expired for service E_3001

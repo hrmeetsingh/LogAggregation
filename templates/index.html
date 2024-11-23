@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Generator Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .slider-container {
+            margin: 20px 0;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .value-display {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            min-width: 40px;
+            text-align: center;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #e8f5e9;
+            display: none;
+        }
+        .log-info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <h1>Log Generator Control Panel</h1>
+        
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>System Logs</span>
+                <span class="value-display" id="system-value">0</span>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="slider" id="system-slider">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>Error Logs</span>
+                <span class="value-display" id="error-value">0</span>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="slider" id="error-slider">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>Application Logs</span>
+                <span class="value-display" id="application-value">0</span>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="slider" id="application-slider">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>Access Logs</span>
+                <span class="value-display" id="access-value">0</span>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="slider" id="access-slider">
+        </div>
+
+        <div id="status" class="status">Settings updated successfully!</div>
+
+        <div class="log-info">
+            <p>Slider values control log generation rates:</p>
+            <ul>
+                <li>0 = No logs</li>
+                <li>50 = ~5 logs per second</li>
+                <li>100 = ~10 logs per second</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const sliders = ['system', 'error', 'application', 'access'];
+        let updateTimeout;
+
+        function updateRates() {
+            const rates = {};
+            sliders.forEach(type => {
+                rates[type] = parseInt(document.getElementById(`${type}-slider`).value);
+            });
+
+            fetch('/update_rates', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rates)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const status = document.getElementById('status');
+                status.style.display = 'block';
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 2000);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Initialize sliders and add event listeners
+        sliders.forEach(type => {
+            const slider = document.getElementById(`${type}-slider`);
+            const value = document.getElementById(`${type}-value`);
+            
+            slider.addEventListener('input', (e) => {
+                value.textContent = e.target.value;
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(updateRates, 300);
+            });
+        });
+
+        // Load initial values
+        fetch('/get_rates')
+            .then(response => response.json())
+            .then(rates => {
+                sliders.forEach(type => {
+                    const slider = document.getElementById(`${type}-slider`);
+                    const value = document.getElementById(`${type}-value`);
+                    slider.value = rates[type];
+                    value.textContent = rates[type];
+                });
+            });
+    </script>
+</body>
+</html>
