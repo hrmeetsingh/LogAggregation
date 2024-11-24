@@ -1,6 +1,8 @@
 # Log Aggregation Data Generator
 
-This is a data generator for log aggregation data. This tool can be used to generate log files for testing purposes log aggregation systems. Dummy data keeps appending to the log files, hence the logs can be tail'ed. 
+This is a test data generator for log aggregation data. It can be used to generate log files for testing purposes in log aggregation systems. Dummy data keeps appending to the log files, hence the logs can be tail'ed and using the sliders, the composition of the logs can be changed. A future enhancement will be to have the events published to a Kafka topic. 
+
+Test data writing is done in a separate thread to prevent the main thread from blocking.
 
 ## How to get ready
 1. Clone the repository: `git clone https://github.com/hrmeetsingh/LogAggregation.git`
