@@ -22,7 +22,7 @@ log_rates = {
     'access': 0
 }
 
-LOG_MESSAGES = {
+LOG_MESSAGES_DETAILED = {
     'system': [
         # System Performance
         "CPU usage: {}% across {} cores",
