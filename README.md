@@ -1,6 +1,6 @@
 # Log Aggregation Data Generator
 
-This is a data generator for log aggregation data. This tool can be used to generate log files for testing purposes log aggregation systems. 
+This is a data generator for log aggregation data. This tool can be used to generate log files for testing purposes log aggregation systems. Dummy data keeps appending to the log files, hence the logs can be tail'ed. 
 
 ## How to get ready
 1. Clone the repository: `git clone https://github.com/hrmeetsingh/LogAggregation.git`
