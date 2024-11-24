@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, jsonify, request
 import threading
 import time
@@ -185,325 +184,125 @@ LOG_MESSAGES = {
         "{} - {} [{}] \"GET /assets/fonts/{}.woff2 HTTP/1.1\" {} {} \"{}\" \"{}\"",
         
         # Special Routes
-        "{} - {} [{}] \"GET /health HTTP/1.1\" {} {} \"{}\" \"{}\"",
-        "{} - {} [{}] \"GET /metrics HTTP/1.1\" {} {} \"{}\" \"{}\"",
-        "{} - {} [{}] \"POST /webhooks/{} HTTP/1.1\" {} {} \"{}\" \"{}\"",
-        "{} - {} [{}] \"GET /sitemap.xml HTTP/1.1\" {} {} \"{}\" \"{}\"",
-        "{} - {} [{}] \"GET /robots.txt HTTP/1.1\" {} {} \"{}\" \"{}\"",
-        "{} - {} [{}] \"GET /swagger/v{}/api-docs HTTP/1.1\" {} {} \"{}\" \"{}\"",
+        "{} - {} ({}) \"GET /health HTTP/1.1\" {} {} \"{}\" \"{}\"",
+        "{} - {} ({}) \"GET /metrics HTTP/1.1\" {} {} \"{}\" \"{}\"",
+        "{} - {} ({}) \"POST /webhooks/{} HTTP/1.1\" {} {} \"{}\" \"{}\"",
+        "{} - {} ({}) \"GET /sitemap.xml HTTP/1.1\" {} {} \"{}\" \"{}\"",
+        "{} - {} ({}) \"GET /robots.txt HTTP/1.1\" {} {} \"{}\" \"{}\"",
+        "{} - {} ({}) \"GET /swagger/v{}/api-docs HTTP/1.1\" {} {} \"{}\" \"{}\"",
     ]
 }
 
 
 # Message templates
-# LOG_MESSAGES = {
-#     'system': [
-#         "System health check completed",
-#         "CPU usage: {}%",
-#         "Memory usage: {}MB",
-#         "Disk space remaining: {}GB",
-#         "Network bandwidth: {}Mbps",
-#         "Background tasks: {} running",
-#         "Cache hit ratio: {}%",
-#         "System temperature: {}°C",
-#         "Power consumption: {}W",
-#         "Active users: {}"
-#     ],
-#     'error': [
-#         "Database connection failed: timeout after {}ms",
-#         "Authentication failed for user: {}",
-#         "Invalid request parameter: {}",
-#         "Service {} unavailable",
-#         "Memory leak detected in module: {}",
-#         "File not found: {}",
-#         "Permission denied for resource: {}",
-#         "Rate limit exceeded for IP: {}",
-#         "Uncaught exception in thread: {}",
-#         "API version {} is deprecated"
-#     ],
-#     'application': [
-#         "User {} logged in successfully",
-#         "New account created: {}",
-#         "Payment processed for order #{}",
-#         "Email sent to {}",
-#         "Profile updated for user {}",
-#         "Data export completed for {}",
-#         "Search query executed: {}",
-#         "Configuration updated: {}",
-#         "Cache invalidated for key: {}",
-#         "Scheduled task completed: {}"
-#     ],
-#     'access': [
-#         "{} - {} [{}] \"GET /api/users HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"POST /api/login HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"GET /api/products HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"PUT /api/orders HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"DELETE /api/sessions HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"GET /api/stats HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"POST /api/uploads HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"GET /api/search HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"PUT /api/profiles HTTP/1.1\" {} {}",
-#         "{} - {} [{}] \"GET /api/health HTTP/1.1\" {} {}"
-#     ]
-# }
-
-# def generate_log_entry(log_type):
-#     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-#     message_template = random.choice(LOG_MESSAGES[log_type])
-    
-#     if log_type == 'system':
-#         message = message_template.format(
-#             random.randint(0, 100) if '{}%' in message_template
-#             else random.randint(100, 1000) if '{}MB' in message_template
-#             else random.randint(50, 500) if '{}GB' in message_template
-#             else random.randint(100, 1000) if '{}Mbps' in message_template
-#             else random.randint(1, 20) if '{} running' in message_template
-#             else random.randint(50, 99) if '{}%' in message_template
-#             else random.randint(30, 80) if '{}°C' in message_template
-#             else random.randint(200, 500) if '{}W' in message_template
-#             else random.randint(1, 1000)
-#         )
-#         return f"{timestamp} [SYSTEM] {message}"
-    
-#     elif log_type == 'error':
-#         message = message_template.format(
-#             random.randint(1000, 5000) if '{}ms' in message_template
-#             else f"user_{random.randint(1000, 9999)}" if 'user: {}' in message_template
-#             else f"param_{random.randint(1, 100)}" if 'parameter: {}' in message_template
-#             else f"service_{random.randint(1, 10)}" if 'Service {}' in message_template
-#             else f"module_{random.randint(1, 20)}" if 'module: {}' in message_template
-#             else f"/path/to/file_{random.randint(1, 100)}.txt" if 'File not found: {}' in message_template
-#             else f"resource_{random.randint(1, 50)}" if 'resource: {}' in message_template
-#             else f"{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}" if 'IP: {}' in message_template
-#             else f"Thread-{random.randint(1, 100)}" if 'thread: {}' in message_template
-#             else f"v{random.randint(1, 5)}.{random.randint(0, 9)}"
-#         )
-#         return f"{timestamp} [ERROR] {message}"
-    
-#     elif log_type == 'application':
-#         message = message_template.format(
-#             f"user_{random.randint(1000, 9999)}" if 'user {}' in message_template or 'User {}' in message_template
-#             else f"account_{random.randint(1000, 9999)}" if 'account created: {}' in message_template
-#             else f"{random.randint(10000, 99999)}" if 'order #{}' in message_template
-#             else f"user{random.randint(1, 1000)}@example.com" if 'Email sent to {}' in message_template
-#             else f"profile_{random.randint(1, 1000)}" if 'Profile updated for user {}' in message_template
-#             else f"export_{random.randint(1, 100)}" if 'Data export completed for {}' in message_template
-#             else f"query_{random.randint(1, 100)}" if 'Search query executed: {}' in message_template
-#             else f"config_{random.randint(1, 50)}" if 'Configuration updated: {}' in message_template
-#             else f"cache_key_{random.randint(1, 1000)}" if 'Cache invalidated for key: {}' in message_template
-#             else f"task_{random.randint(1, 100)}"
-#         )
-#         return f"{timestamp} [INFO] {message}"
-    
-#     else:  # access log
-#         ip = f"{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}"
-#         user = f"user_{random.randint(1000,9999)}"
-#         status = random.choice([200, 201, 204, 400, 401, 403, 404, 500])
-#         bytes_sent = random.randint(500, 5000)
-#         return message_template.format(ip, user, timestamp, status, bytes_sent)
-
-
-################################################################################################
-
-def generate_referrer() -> str:
-    """
-    Generate a single random referrer URL.
-    
-    Returns:
-        str: A generated referrer URL
-    """
-    
-    # Common top-level domains
-    tlds = ['com', 'org', 'net', 'edu', 'co.uk', 'io']
-    
-    # Common website names (without TLD)
-    site_names = [
-        'example',
-        'website',
-        'blog',
-        'news',
-        'tech',
-        'digital',
-        'online',
-        'web',
-        'info',
-        'data',
-        'dev',
-        'code',
-        'site',
-        'portal'
+LOG_MESSAGES = {
+    'system': [
+        "System health check completed",
+        "CPU usage: {}%",
+        "Memory usage: {}MB",
+        "Disk space remaining: {}GB",
+        "Network bandwidth: {}Mbps",
+        "Background tasks: {} running",
+        "Cache hit ratio: {}%",
+        "System temperature: {}°C",
+        "Power consumption: {}W",
+        "Active users: {}"
+    ],
+    'error': [
+        "Database connection failed: timeout after {}ms",
+        "Authentication failed for user: {}",
+        "Invalid request parameter: {}",
+        "Service {} unavailable",
+        "Memory leak detected in module: {}",
+        "File not found: {}",
+        "Permission denied for resource: {}",
+        "Rate limit exceeded for IP: {}",
+        "Uncaught exception in thread: {}",
+        "API version {} is deprecated"
+    ],
+    'application': [
+        "User {} logged in successfully",
+        "New account created: {}",
+        "Payment processed for order #{}",
+        "Email sent to {}",
+        "Profile updated for user {}",
+        "Data export completed for {}",
+        "Search query executed: {}",
+        "Configuration updated: {}",
+        "Cache invalidated for key: {}",
+        "Scheduled task completed: {}"
+    ],
+    'access': [
+        "{} [{}] \"GET /api/users HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"GET /api/orders HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"GET /api/stats HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"POST /api/login HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"GET /api/products HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"PUT /api/orders HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"DELETE /api/sessions HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"GET /api/stats HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"POST /api/uploads HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"GET /api/search HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"PUT /api/profiles HTTP/1.1\" {} {} Bytes",
+        "{} [{}] \"GET /api/health HTTP/1.1\" {} {} Bytes",
     ]
-    
-    # Common subdomains
-    subdomains = [
-        'www',
-        'blog',
-        'news',
-        'dev',
-        'docs',
-        ''  # Empty string for no subdomain
-    ]
-    
-    # Common paths
-    paths = [
-        '',  # Root path
-        'about',
-        'contact',
-        'news',
-        'blog',
-        'articles',
-        'products',
-        'services',
-        'resources'
-    ]
-    
-    # Generate URL components
-    subdomain = random.choice(subdomains)
-    site_name = random.choice(site_names)
-    tld = random.choice(tlds)
-    path = random.choice(paths)
-    
-    # Construct the URL
-    url = 'https://'
-    if subdomain:
-        url += f'{subdomain}.'
-    url += f'{site_name}.{tld}'
-    if path:
-        url += f'/{path}'
-        
-    return url
-
-
-################################################################################################
-
-
-def generate_user_agents(count: int = 1, include_mobile: bool = True) -> List[str]:
-    """
-    Generate a list of random user agent strings.
-    
-    Args:
-        count (int): Number of user agents to generate
-        include_mobile (bool): Whether to include mobile user agents
-        
-    Returns:
-        List[str]: List of generated user agent strings
-    """
-    
-    browsers = {
-        'chrome': {
-            'versions': ['90.0.4430.212', '91.0.4472.124', '92.0.4515.159', '93.0.4577.82'],
-            'template': 'Mozilla/5.0 ({os}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{version} Safari/537.36'
-        },
-        'firefox': {
-            'versions': ['88.0', '89.0', '90.0', '91.0'],
-            'template': 'Mozilla/5.0 ({os}; rv:{version}) Gecko/20100101 Firefox/{version}'
-        },
-        'safari': {
-            'versions': ['14.1.1', '14.1.2', '15.0', '15.1'],
-            'template': 'Mozilla/5.0 ({os}) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/{version} Safari/605.1.15'
-        }
-    }
-    
-    desktop_os = [
-        'Windows NT 10.0; Win64; x64',
-        'Windows NT 6.1; Win64; x64',
-        'Macintosh; Intel Mac OS X 10_15_7',
-        'X11; Linux x86_64',
-        'X11; Ubuntu; Linux x86_64'
-    ]
-    
-    mobile_devices = [
-        'iPhone; CPU iPhone OS 14_6 like Mac OS X',
-        'Linux; Android 11; SM-G991B',
-        'Linux; Android 10; SM-A505FN',
-        'iPhone; CPU iPhone OS 15_0 like Mac OS X',
-        'Linux; Android 12; Pixel 6'
-    ]
-    
-    def generate_desktop_ua() -> str:
-        """Generate a single desktop user agent."""
-        browser = random.choice(list(browsers.values()))
-        os_string = random.choice(desktop_os)
-        version = random.choice(browser['versions'])
-        return browser['template'].format(os=os_string, version=version)
-    
-    def generate_mobile_ua() -> str:
-        """Generate a single mobile user agent."""
-        browser = browsers['chrome']  # Most mobile browsers use Chrome-based engines
-        device = random.choice(mobile_devices)
-        version = random.choice(browser['versions'])
-        return f"Mozilla/5.0 ({device}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{version} Mobile Safari/537.36"
-    
-    user_agents = []
-    for _ in range(count):
-        if include_mobile and random.random() < 0.3:  # 30% chance of mobile user agent
-            user_agents.append(generate_mobile_ua())
-        else:
-            user_agents.append(generate_desktop_ua())
-            
-    return user_agents
-
-
-################################################################################################
+}
 
 def generate_log_entry(log_type):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     message_template = random.choice(LOG_MESSAGES[log_type])
     
     if log_type == 'system':
-        # Complex system log formatting
         message = message_template.format(
-            *(random.randint(0, 100) for _ in range(message_template.count('{}')))
-            if '%' in message_template
-            else random.randint(100, 1000) if 'MB' in message_template
-            else random.randint(50, 500) if 'GB' in message_template
-            else random.randint(100, 1000) if 'Mbps' in message_template
-            else f"service_{random.randint(1, 20)}" if 'service' in message_template.lower()
-            else random.randint(1, 20)
+            random.randint(0, 100) if '{}%' in message_template
+            else random.randint(100, 1000) if '{}MB' in message_template
+            else random.randint(50, 500) if '{}GB' in message_template
+            else random.randint(100, 1000) if '{}Mbps' in message_template
+            else random.randint(1, 20) if '{} running' in message_template
+            else random.randint(50, 99) if '{}%' in message_template
+            else random.randint(30, 80) if '{}°C' in message_template
+            else random.randint(200, 500) if '{}W' in message_template
+            else random.randint(1, 1000)
         )
         return f"{timestamp} [SYSTEM] {message}"
     
     elif log_type == 'error':
-        # Enhanced error log formatting
-        error_codes = ['E_1001', 'E_1002', 'E_2001', 'E_3001', 'E_4001']
-        services = ['auth', 'db', 'cache', 'api', 'web']
-        error_types = ['ValidationError', 'TimeoutError', 'ConnectionError', 'SecurityError']
-        
         message = message_template.format(
-            random.choice(error_codes),
-            random.choice(services),
-            random.choice(error_types),
-            f"{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}",
-            random.randint(1000, 9999)
+            random.randint(1000, 5000) if '{}ms' in message_template
+            else f"user_{random.randint(1000, 9999)}" if 'user: {}' in message_template
+            else f"param_{random.randint(1, 100)}" if 'parameter: {}' in message_template
+            else f"service_{random.randint(1, 10)}" if 'Service {}' in message_template
+            else f"module_{random.randint(1, 20)}" if 'module: {}' in message_template
+            else f"/path/to/file_{random.randint(1, 100)}.txt" if 'File not found: {}' in message_template
+            else f"resource_{random.randint(1, 50)}" if 'resource: {}' in message_template
+            else f"{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}" if 'IP: {}' in message_template
+            else f"Thread-{random.randint(1, 100)}" if 'thread: {}' in message_template
+            else f"v{random.randint(1, 5)}.{random.randint(0, 9)}"
         )
         return f"{timestamp} [ERROR] {message}"
     
     elif log_type == 'application':
-        # Enhanced application log formatting
-        users = [f"user_{random.randint(1000, 9999)}" for _ in range(5)]
-        actions = ['created', 'updated', 'deleted', 'viewed', 'shared']
-        resources = ['post', 'comment', 'profile', 'document', 'settings']
-        
         message = message_template.format(
-            random.choice(users),
-            random.choice(actions),
-            random.choice(resources),
-            random.randint(1, 1000)
+            f"user_{random.randint(1000, 9999)}" if 'user {}' in message_template or 'User {}' in message_template
+            else f"account_{random.randint(1000, 9999)}" if 'account created: {}' in message_template
+            else f"{random.randint(10000, 99999)}" if 'order #{}' in message_template
+            else f"user{random.randint(1, 1000)}@example.com" if 'Email sent to {}' in message_template
+            else f"profile_{random.randint(1, 1000)}" if 'Profile updated for user {}' in message_template
+            else f"export_{random.randint(1, 100)}" if 'Data export completed for {}' in message_template
+            else f"query_{random.randint(1, 100)}" if 'Search query executed: {}' in message_template
+            else f"config_{random.randint(1, 50)}" if 'Configuration updated: {}' in message_template
+            else f"cache_key_{random.randint(1, 1000)}" if 'Cache invalidated for key: {}' in message_template
+            else f"task_{random.randint(1, 100)}"
         )
         return f"{timestamp} [INFO] {message}"
     
     else:  # access log
         ip = f"{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}"
         user = f"user_{random.randint(1000,9999)}"
-        status = random.choice([200, 201, 204, 301, 302, 304, 400, 401, 403, 404, 500, 502, 503])
-        bytes_sent = random.randint(500, 150000)
-        path = f"/api/v{random.randint(1,3)}/{random.choice(['users', 'posts', 'comments', 'products'])}/{random.randint(1,1000)}"
-        referer = generate_referrer()
-        user_agent = generate_user_agents(1)[0]
-        
-        return message_template.format(
-            ip, user, timestamp, path, status, bytes_sent, referer, user_agent
-        )
+        status = random.choice([200, 201, 204, 400, 401, 403, 404, 500])
+        bytes_sent = random.randint(500, 5000)
+        message = message_template.format(user, ip, status, bytes_sent)
+        return f"{timestamp} [ACCESS] {message}"
 
 def log_writer():
     while True:
